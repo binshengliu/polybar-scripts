@@ -66,11 +66,11 @@ fi
 if [ -n "$current" ] && [ -n "$forecast" ]; then
     current_temp=$(echo "$current" | jq ".main.temp" | cut -d "." -f 1)
     current_icon=$(echo "$current" | jq -r ".weather[0].icon")
-    current_main=$(echo "$current" | jq -r ".weather[].description")
+    current_main=$(echo "$current" | jq -r ".weather[0].description")
 
     forecast_temp=$(echo "$forecast" | jq ".list[].main.temp" | cut -d "." -f 1)
     forecast_icon=$(echo "$forecast" | jq -r ".list[].weather[0].icon")
-    forecast_main=$(echo "$forecast" | jq -r ".list[].weather[].description")
+    forecast_main=$(echo "$forecast" | jq -r ".list[].weather[0].description")
 
 
     if [ "$current_temp" -gt "$forecast_temp" ]; then
