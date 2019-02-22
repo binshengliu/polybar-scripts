@@ -67,7 +67,7 @@ input_volume() {
 output_volume_listener() {
     pactl subscribe | while read -r event; do
         if echo "$event" | grep -q "change"; then
-            output_volume
+            format_volume $(output_volume)
         fi
     done
 }
@@ -75,9 +75,24 @@ output_volume_listener() {
 input_volume_listener() {
     pactl subscribe | while read -r event; do
         if echo "$event" | grep -q "change"; then
-            input_volume
+            format_volume $(input_volume)
         fi
     done
+}
+
+format_volume() {
+    output=$1
+    if [ "$output" = "Muted" ]; then
+        echo "%{F#66} Muted%{F-}"
+    else
+        volume=$(echo $output | sed -n 's/\([0-9]\+\)%/\1/p')
+        # echo $volume
+        if [ "$volume" -ge 50 ]  ; then
+            echo " $volume%"
+        else
+            echo " $volume%"
+        fi
+    fi
 }
 
 case "$1" in
@@ -112,11 +127,11 @@ case "$1" in
         input_volume
     ;;
     --output_volume_listener)
-        output_volume
+        format_volume $(output_volume)
         output_volume_listener
     ;;
     --input_volume_listener)
-        input_volume
+        format_volume $(input_volume)
         input_volume_listener
     ;;
     *)
